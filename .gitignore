@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# lookup tables made in the 1D plate cooling script 
+*.npz
+*.npy
+
+# output folder and output files 
+output/
+*.vtu
+*.ascii
+
+# mesh related files 
+*.geo
+*.msh 
+make_mesh/*.txt
+
+
