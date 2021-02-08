@@ -9,8 +9,8 @@ Rgas        = 8.3145
 eps         = 1e-9 # a little epsilon equivalent to zero
 
 # ========== model specific constants (for the entire model run) ========== #
-Ttop        = 0. 
-Tmax        = 1300.
+Ttop        = 0.      #C 
+Tmax        = 1300.   #C
 alpha       = 0.005
 
 # ========== temperature dependent variables ========== # 
@@ -35,7 +35,7 @@ option_rho  = 0
 
 # ======== 1D thermal structure of oceanic lithosphere ======== # 
 
-recalculate = 1
+recalculate = 0
 # do you want to recalculate the lookup table for the LHS of the 2D problem?
 # 0 = no 
 # 1 = yes 

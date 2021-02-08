@@ -403,10 +403,7 @@ print("     -> total area %.6f " %(area.sum()))
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
 #################################################################
-# We wish to fix both components of the velocity in the over-riding 
-# plate. Through trial and error, I found out that one cannot 
-# fix all dofs, so I leave some free, which is not too important since 
-# these elements are pretty much bound by no slip b.c. all around 
+# Boundary conditions 
 #################################################################
 start = timing.time()
 
@@ -736,7 +733,7 @@ for iter in range(0,input.niter):
     
     if input.left_boundary_condition == 1:
         # load results from the 1D plate cooling script 
-        data = np.load('slab_k{0}_Cp{1}_rho{2}.npz'.format(input.option_k,input.option_C_p,input.option_rho))
+        data = np.load('databases/slab_k{0}_Cp{1}_rho{2}.npz'.format(input.option_k,input.option_C_p,input.option_rho))
         temp1D   = data['temperature']
         ini_time = data['t']
         ini_space= data['z']
