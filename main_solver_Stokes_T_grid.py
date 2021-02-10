@@ -111,21 +111,44 @@ sTnodes=[0,0,1,0.0,0.5,0.5]
 #------------------------------------------------------------------------------
 
 def viscosity(exx,eyy,exy,T,imat):
+
+    # diffusion creep
+    if imat == 1 and iter> 0: 
+       eta_diff=input.A_diff*np.exp(input.Q_diff/input.Rgas/T)
+    else:
+       eta_diff=input.eta_def
+
+    # dislocation creep
+    if imat==1 and iter>0:
+       e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
+       eta_disl=input.A_disl*np.exp(input.Q_disl/input.n_disl/input.Rgas/T)*e**(-1+1./input.n_disl)
+    else: 
+       eta_disl=input.eta_def  
+
+    # combining dislocation and diffusion creep
+    if imat==1 and iter>0:
+       if eta_disl >= eta_diff:
+          eta_comb = eta_disl
+       else:
+          eta_comb = eta_diff 
+    else: 
+       eta_comb=input.eta_def 
+
     if input.case=='1a' or input.case=='1b' or input.case=='1c':
        val=input.eta_def
-    elif input.case=='2a': #diffusion creep 
-       if imat==1 and iter>0:
-          eta_diff=input.A_diff*np.exp(input.Q_diff/input.Rgas/T)
-          val=1/(1/input.eta_max+1/eta_diff)
-       else:
-          val=input.eta_def
-    else: #dislocation creep 
-       if imat==1 and iter>0:
-          e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
-          eta_disl=input.A_disl*np.exp(input.Q_disl/input.n_disl/input.Rgas/T)*e**(-1+1./input.n_disl)
-          val=1/(1/input.eta_max+1/eta_disl)
-       else:
-          val=input.eta_def
+   
+    if input.case=='2a': 
+       # diffusion creep 
+       val=1/(1/input.eta_max+1/eta_diff)
+    
+    if input.case=='2b': 
+       # dislocation creep 
+       val=1/(1/input.eta_max+1/eta_disl)
+   
+    if input.case=='2c':
+       # dislocation & diffusion creep 
+       val=1/(1/input.eta_max+1/eta_comb)
+
     return val
 
 #------------------------------------------------------------------------------
@@ -693,7 +716,7 @@ for iter in range(0,input.niter):
        u,v=np.reshape(sol[0:NfemV],(NV,2)).T
        p=sol[NfemV:Nfem]*pressure_scaling
 
-    if input.case=='1b' or input.case=='1c' or input.case=='2a' or input.case=='2b':
+    if input.case=='1b' or input.case=='1c' or input.case=='2a' or input.case=='2b' or input.case=='2c':
        for i in range(0,NV):
            if yV[i]>=Ly-50e3: 
               u[i]=0.

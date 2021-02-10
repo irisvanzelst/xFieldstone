@@ -70,7 +70,7 @@ left_boundary_condition = 1
 # 1 = 1D FD model of oceanic lithosphere cooling 
 
 # ----- rheology ----- #
-case = '1c' 
+case = '2c' 
 # 1a = analytical cornerflow model 
 # 1b = dynamical flow in isoviscous wedge I 
 # 1c = dynamical flow in isoviscous wedge II 
@@ -91,7 +91,7 @@ n_disl  =   3.5
 eta_max =   1.e26   # maximum viscosity in the model 
 eta_def =   1.e21   # default viscosity 
 relax   =   0.8 
-niter   =   50      # number of iterations 
+niter   =   1       # number of iterations 
 tol     =   1e-5    # tolerance 
 
 
