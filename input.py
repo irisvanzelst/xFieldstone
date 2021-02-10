@@ -65,12 +65,12 @@ nely = 60 #240
 slab_vel = 5. * cm / year   # velocity of the subducting slab 
 slab_age = 50.e6 * year   # slab age
 
-left_boundary_condition = 1
+left_boundary_condition = 0
 # 0 = Van Keken half-space cooling model 
 # 1 = 1D FD model of oceanic lithosphere cooling 
 
 # ----- rheology ----- #
-case = '2c' 
+case = '2a' 
 # 1a = analytical cornerflow model 
 # 1b = dynamical flow in isoviscous wedge I 
 # 1c = dynamical flow in isoviscous wedge II 
@@ -91,7 +91,7 @@ n_disl  =   3.5
 eta_max =   1.e26   # maximum viscosity in the model 
 eta_def =   1.e21   # default viscosity 
 relax   =   0.8 
-niter   =   1       # number of iterations 
+niter   =   50       # number of iterations 
 tol     =   1e-5    # tolerance 
 
 
