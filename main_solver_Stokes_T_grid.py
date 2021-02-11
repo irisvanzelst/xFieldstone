@@ -126,13 +126,10 @@ def viscosity(exx,eyy,exy,T,imat):
        eta_disl=input.eta_def  
 
     # combining dislocation and diffusion creep
-    if imat==1 and iter>0:
-       if eta_disl >= eta_diff:
-          eta_comb = eta_disl
-       else:
-          eta_comb = eta_diff 
-    else: 
-       eta_comb=input.eta_def 
+    if eta_disl <= eta_diff:
+       eta_comb = eta_disl
+    else:
+       eta_comb = eta_diff 
 
     if input.case=='1a' or input.case=='1b' or input.case=='1c':
        val=input.eta_def
