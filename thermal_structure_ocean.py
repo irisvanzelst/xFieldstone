@@ -169,8 +169,6 @@ for time in range(1,nt):
 
         # ========== Solve system of equations using numpy.linalg.solve ==========
         
-        input.option_1D_solve = 2 # 1 = brute force; 2 = tridiagonal banded matrix solve
-        
         if input.option_1D_solve == 1:
             # brute force solve
             Tnew = transpose(np.linalg.solve(M, D))    # solve Mx = D for x

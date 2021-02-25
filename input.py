@@ -44,7 +44,7 @@ recalculate = 0
 dz          = 1000.                # m 
 dt          = 1000. * year        # year
 end_time    = 200. * 1e6 * year    # million years 
-nz          = 106                  # size of the spatial array (in km; max depth, assuming dz = 1km) 
+nz          = 107                  # size of the spatial array (in km; max depth, assuming dz = 1km) 
 depth_melt1 = 0e3 
 
 # how to solve the model 
