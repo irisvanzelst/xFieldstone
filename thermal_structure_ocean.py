@@ -61,7 +61,7 @@ for i in range(0,input.nz):
 
 temperature = zeros((nt,input.nz))
 temperature[0,:] = Told
-print(Told)
+# print(Told)
 
 dummy = zeros((1,input.nz))
 
@@ -207,12 +207,12 @@ for time in range(1,nt):
             temperature[time,:] = Tnew
             Told = Tnew
             Tdummy = []
-            print(Tnew)
+            # print(Tnew)
         
         # end for-loop predictor-corrector step 
 
 print("time: %.3f s" % (timing.time() - start))
-print(Tnew)
+# print(Tnew)
 
 # ========== save thermal structure ==========
 
