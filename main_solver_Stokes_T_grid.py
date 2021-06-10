@@ -1502,7 +1502,6 @@ if visu:
         vtufile.write("%10e \n" %eta)
     vtufile.write("</DataArray>\n")
 
-
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='tau' Format='ascii'> \n")
     for iel in range (0,nel):
