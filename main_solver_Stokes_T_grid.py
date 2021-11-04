@@ -856,7 +856,7 @@ for iter in range(0,input.niter):
             # account crustal layer 
             if (yq <= -xq + 600e3) and yq > (-xq + 600e3 - np.sqrt(2)*input.crustal_thickness): 
                # compute diffusion matrix
-               Kd+=B_mat.T.dot(B_mat)*mimic_crust*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+               Kd+=B_mat.T.dot(B_mat)*input.mimic_crust*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
             else:
                # compute diffusion matrix
                Kd+=B_mat.T.dot(B_mat)*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
