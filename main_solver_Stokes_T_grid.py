@@ -853,8 +853,13 @@ for iter in range(0,input.niter):
             #print(thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel]))
             #print(thermal_parameters.density(input.option_rho,Tq,pq,mat[iel]))
 
-            # compute diffusion matrix
-            Kd+=B_mat.T.dot(B_mat)*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+            # account crustal layer 
+            if (yq <= -xq + 600e3) and yq > (-xq + 600e3 - np.sqrt(2)*input.crustal_thickness): 
+               # compute diffusion matrix
+               Kd+=B_mat.T.dot(B_mat)*mimic_crust*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+            else:
+               # compute diffusion matrix
+               Kd+=B_mat.T.dot(B_mat)*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
 
             # compute advection matrix
             Ka+=N_mat.dot(velq.dot(B_mat))*thermal_parameters.density(input.option_rho,Tq,pq,mat[iel])*thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel])*weightq*jcob
@@ -1170,8 +1175,17 @@ for iel in range(0,nel):
             dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
         #end for
         inode=iconT[i,iel]
-        qx_n[inode]+=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])
-        qy_n[inode]+=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])
+        if i <= 2:
+            qnode=q[iconV[i,iel]]
+        elif i == 3: 
+            qnode=q[iconV[5,iel]]
+        elif i == 4: 
+            qnode=q[iconV[3,iel]]
+        else:
+            qnode=q[iconV[4,iel]]
+        #end if 
+        qx_n[inode]-=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+        qy_n[inode]-=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
         count[inode]+=1
     #end for
 #end for
@@ -1184,6 +1198,7 @@ print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
 print("compute nodal heat flux: %.3f s" % (timing.time() - start))
 
+np.savetxt('heat_flux.ascii',np.array([xT,yT,qx_n,qy_n]).T,header='# xT,yT,qx_n,qy_n')
 #################################################################
 # export slab interface temperature 
 #################################################################

@@ -15,12 +15,12 @@ alpha       = 0.005
 
 # ========== temperature dependent variables ========== # 
 
-option_k    = 0 
+option_k    = 1 
 # 0 = constant according to Parsons & Slater 1977; 
 # 1 = T-dependent with k from (simplified) Hofmeister 1999 as posed by McKenzie et al., 2005
 # 2 = T-dependent with k from Xu et al., 2004 
 
-option_C_p  = 0 
+option_C_p  = 6 
 # 0 = constant according to Parsons & Slater 1977
 # 1 = 100% forsterite Berman 1988
 # 2 = 100% fayalite Berman 1988
@@ -29,7 +29,7 @@ option_C_p  = 0
 # 5 = 100% fayalite Berman & Aranovich 1996
 # 6 = 89% forsterite & 11% fayalite Berman & Aranovich 1996
 
-option_rho  = 0 
+option_rho  = 1 
 # 0 = constant according to Parsons & Slater 1977
 # 1 = T-dependent based on McKenzie et al., 2005
 
@@ -65,6 +65,9 @@ nely = 60 #240
 slab_vel = 5. * cm / year   # velocity of the subducting slab 
 slab_age = 50.e6 * year   # slab age
 
+crustal_thickness = 10.e3  # m
+mimic_crust = 0.5          # how much do you reduce the thermal conductivity for the 'crust'?
+
 left_boundary_condition = 0
 # 0 = Van Keken half-space cooling model 
 # 1 = 1D FD model of oceanic lithosphere cooling 
@@ -91,7 +94,7 @@ n_disl  =   3.5
 eta_max =   1.e26   # maximum viscosity in the model 
 eta_def =   1.e21   # default viscosity 
 relax   =   0.8 
-niter   =   50       # number of iterations 
+niter   =   2       # number of iterations 
 tol     =   1e-5    # tolerance 
 
 
