@@ -778,7 +778,8 @@ for iter in range(0,input.niter):
         if xT[i]<1:
            bc_fixT[i]=True 
            if input.left_boundary_condition == 0:
-               bc_valT[i]=input.kelvin+(input.Tmax+input.kelvin-input.kelvin)*erf(((Ly-yT[i]))/(2*np.sqrt((thermal_parameters.heat_conductivity(0,0,0,0)/thermal_parameters.density(0,0,0,0)/thermal_parameters.heat_capacity(0,0,0,0))*input.slab_age)))
+              # add crustal layer in subducting slab boundary condition
+              bc_valT[i]=input.kelvin+(input.Tmax+input.kelvin-input.kelvin)*erf(((Ly-yT[i]))/(2*np.sqrt((thermal_parameters.heat_conductivity(0,0,0,0)/thermal_parameters.density(0,0,0,0)/thermal_parameters.heat_capacity(0,0,0,0))*input.slab_age)))
            elif input.left_boundary_condition == 1:
                if yT[i] < np.min(ini_space):
                    bc_valT[i]= input.Tmax + input.kelvin
@@ -853,16 +854,32 @@ for iter in range(0,input.niter):
             #print(thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel]))
             #print(thermal_parameters.density(input.option_rho,Tq,pq,mat[iel]))
 
-            # account crustal layer 
-            if (yq <= -xq + 600e3) and yq > (-xq + 600e3 - np.sqrt(2)*input.crustal_thickness): 
+            if (yq <= -xq + 600e3) and yq > (-xq + 600e3 - np.sqrt(2)*input.slab_crustal_thickness): 
+               # add slab oceanic crustal layer 
+            
                # compute diffusion matrix
-               Kd+=B_mat.T.dot(B_mat)*input.mimic_crust*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+               Kd+=B_mat.T.dot(B_mat)*input.mimic_crust_conductivity*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+            
+               # compute advection matrix
+               Ka+=N_mat.dot(velq.dot(B_mat))*thermal_parameters.density(input.option_rho,Tq,pq,mat[iel])*thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel])*weightq*jcob
+            
+            elif (yq > (600e3 - input.upper_plate_thickness ) and yq > (-xq + 600e3) ):
+               # add upper plate - depending on thickness and density it can be oceanic or continental 
+
+               # compute diffusion matrix
+               Kd+=B_mat.T.dot(B_mat)*input.mimic_crust_conductivity*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
+            
+               # compute advection matrix
+               Ka+=N_mat.dot(velq.dot(B_mat))*input.mimic_crust_density*thermal_parameters.density(input.option_rho,Tq,pq,mat[iel])*thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel])*weightq*jcob
+
             else:
+               # the remaining parts of the model 
+
                # compute diffusion matrix
                Kd+=B_mat.T.dot(B_mat)*thermal_parameters.heat_conductivity(input.option_k,Tq,pq,mat[iel])*weightq*jcob
 
-            # compute advection matrix
-            Ka+=N_mat.dot(velq.dot(B_mat))*thermal_parameters.density(input.option_rho,Tq,pq,mat[iel])*thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel])*weightq*jcob
+               # compute advection matrix
+               Ka+=N_mat.dot(velq.dot(B_mat))*thermal_parameters.density(input.option_rho,Tq,pq,mat[iel])*thermal_parameters.heat_capacity(input.option_C_p,Tq,pq,mat[iel])*weightq*jcob
 
         # end for kq
 
@@ -1183,9 +1200,16 @@ for iel in range(0,nel):
             qnode=q[iconV[3,iel]]
         else:
             qnode=q[iconV[4,iel]]
-        #end if 
-        qx_n[inode]-=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
-        qy_n[inode]-=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+        #end if
+
+        ## IRIS: when there is an upper plate, you can only use the surface heat flux and not the rest of the field 
+        if   (input.upper_plate == 0):
+           qx_n[inode]-=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+           qy_n[inode]-=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+        elif (input.upper_plate > 0): 
+           qx_n[inode]-=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])*input.mimic_crust_conductivity*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+           qy_n[inode]-=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])*input.mimic_crust_conductivity*thermal_parameters.heat_conductivity(input.option_k,T[inode],qnode,mat[iel])
+        
         count[inode]+=1
     #end for
 #end for

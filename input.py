@@ -35,7 +35,7 @@ option_rho  = 1
 
 # ======== 1D thermal structure of oceanic lithosphere ======== # 
 
-recalculate = 0
+recalculate = 1
 # do you want to recalculate the lookup table for the LHS of the 2D problem?
 # 0 = no 
 # 1 = yes 
@@ -58,22 +58,38 @@ visualisation_1D = 0
 # ======== 2D kinematic subduction with dynamic wedge ======== #
 
 # resolution 
-nelx = 66 #264
-nely = 60 #240
+nelx = 264 #66
+nely = 240 #60
 
 # model setup
 slab_vel = 5. * cm / year   # velocity of the subducting slab 
 slab_age = 50.e6 * year   # slab age
 
-crustal_thickness = 10.e3  # m
-mimic_crust = 0.5          # how much do you reduce the thermal conductivity for the 'crust'?
+# add crustal layer in the slab and the overriding plate 
+slab_crustal_thickness   = 7.e3  # m
+mimic_crust_conductivity = 0.5   # how much do you reduce the thermal conductivity for the 'crust'?
 
-left_boundary_condition = 0
+upper_plate              = 1     # 0 = no upper plate; 1 = oceanic; 2 = continental
+
+if   (upper_plate == 0):
+    # no upper plate 
+    upper_plate_thickness    = 0
+    mimic_crust_density      = 1
+elif (upper_plate == 1):
+    # oceanic upper plate 
+    upper_plate_thickness    = 7e3   
+    mimic_crust_density      = 1     
+elif (upper_plate == 2):
+    # continental upper plate 
+    upper_plate_thickness    = 35e3
+    mimic_crust_density      = 0.79   # scaling factor for density continental crust
+
+left_boundary_condition = 1
 # 0 = Van Keken half-space cooling model 
 # 1 = 1D FD model of oceanic lithosphere cooling 
 
 # ----- rheology ----- #
-case = '2a' 
+case = '2c' 
 # 1a = analytical cornerflow model 
 # 1b = dynamical flow in isoviscous wedge I 
 # 1c = dynamical flow in isoviscous wedge II 
@@ -94,7 +110,7 @@ n_disl  =   3.5
 eta_max =   1.e26   # maximum viscosity in the model 
 eta_def =   1.e21   # default viscosity 
 relax   =   0.8 
-niter   =   2       # number of iterations 
+niter   =   50       # number of iterations 
 tol     =   1e-5    # tolerance 
 
 

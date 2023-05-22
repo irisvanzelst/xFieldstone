@@ -101,7 +101,10 @@ for time in range(1,nt):
             density_m           = (transpose(array(list(map(thermal_parameters.density,options[2,:],Told,dummy,dummy)))) + transpose(array(list(map(thermal_parameters.density,options[2,:],Tdummy,dummy,dummy)))) ) / 2.
             heat_capacity_m     = (transpose(array(list(map(thermal_parameters.heat_capacity,options[1,:],Told,dummy,dummy)))) + transpose(array(list(map(thermal_parameters.heat_capacity,options[1,:],Tdummy,dummy,dummy)))) ) / 2.
             dz_m                = (full((input.nz,1), input.dz) + full((input.nz,1), input.dz) ) / 2.  # current assumption: incompressible
-            
+           
+        # add crustal layer in the slab (i.e., update thermal conductivity) 
+        k_m[0:int(input.slab_crustal_thickness/input.dz + 1)] = k_m[0:int(input.slab_crustal_thickness/input.dz + 1)] * input.mimic_crust_conductivity
+
         for i in range(0,input.nz):
             if i == 0: 
                 start_loop = i
